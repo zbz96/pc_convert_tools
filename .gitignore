@@ -1,0 +1,16 @@
+# Vim
+*.swp
+*.swo
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# colcon
+pcd_path/
+bag_path/
+bin_path/
+log/
+data/
+# Python
+*.pyc:
+
