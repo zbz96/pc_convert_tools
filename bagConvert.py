@@ -64,7 +64,7 @@ def main():
         "--bag_path",
         help='.bag file path.',
         type=str,
-        default="/home/user/bag_path"
+        default=""
     )
     parser.add_argument(
         "--mode",
@@ -76,13 +76,13 @@ def main():
         "--pcd_path",
         help="save pcd path",
         type=str,
-        default="/home/user/pcd_path"
+        default=""
     )
     parser.add_argument(
         "--bin_path",
         help="save bin path",
         type=str,
-        default="/home/user/bin_path"
+        default=""
     )
     parser.add_argument(
         "--lidar_topic",
@@ -103,6 +103,16 @@ def main():
         default=""
     )
     args = parser.parse_args()
+    
+    if len(args.pcd_path) != 0:
+        if os.path.exists(args.pcd_path) == False:
+            os.mkdir(args.pcd_path)
+    if len(args.bin_path) != 0:
+        if os.path.exists(args.bin_path) == False:
+            os.mkdir(args.bin_path)
+    if len(args.img_path) != 0:
+        if os.path.exists(args.img_path) == False:
+            os.mkdir(args.img_path)
     
     #Load bagfile
     bag_files = []
