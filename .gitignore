@@ -10,6 +10,9 @@ pcd_path/
 bag_path/
 bin_path/
 img_path/
+top_pcd_path/
+right_pcd_path/
+left_pcd_path/
 log/
 data/
 # Python

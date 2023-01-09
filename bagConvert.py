@@ -28,12 +28,12 @@ def convert_pc_msg_to_np(pc_msg,remove_nans=True):
 def bag2img(path, img_msg):
     image_data = np.frombuffer(img_msg.data, dtype=np.uint8)
     image = cv2.imdecode(image_data, cv2.IMREAD_COLOR)
-    imgFileName = path + str(img_msg.header.stamp)+'.png'
+    imgFileName = path + str(img_msg.header.stamp.secs) +'.'+str(img_msg.header.stamp.nsecs) +'.png'
     cv2.imwrite(imgFileName, image)
 
 def bag2pcd(path, msg, pc_np):
 
-    pcdFileName = path + str(msg.header.stamp)+'.pcd'
+    pcdFileName = path + str(msg.header.stamp.secs) +'.'+str(msg.header.stamp.nsecs) +'.pcd'
     #写文件句柄
     handle = open(pcdFileName, 'a')
     #得到点云点数
@@ -55,7 +55,7 @@ def bag2pcd(path, msg, pc_np):
 
 
 def bag2bin(path, msg, pc_np):
-    binFileName = path + str(msg.header.stamp)+'.bin'
+    binFileName = path + str(msg.header.stamp.secs) +'.'+str(msg.header.stamp.nsecs) +'.bin'
     pc_np.tofile(binFileName)
 
 def main():
