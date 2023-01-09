@@ -11,6 +11,7 @@ Python 3.8.2
 `$ pip install argparse`  
 `$ pip install pypcd`   
 `$ pip install rosbag`  
+`$ pip install rosbags`  
 `$ pip install rosnumpy`  
 
 ### 2. Launch python file ###

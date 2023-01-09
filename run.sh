@@ -1,0 +1,1 @@
+rosbags-convert bag_path/rosbag2_2022_12_10-15_16_55/ --include-topic /pc/lidar/top/pointcloud
