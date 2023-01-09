@@ -60,48 +60,13 @@ def bag2bin(path, msg, pc_np):
 
 def main():
     parser =  argparse.ArgumentParser(description="Convert .bag to .pcd or .bin")
-    parser.add_argument(
-        "--bag_path",
-        help='.bag file path.',
-        type=str,
-        default=""
-    )
-    parser.add_argument(
-        "--mode",
-        help='.bag to .pcd or .bag to .bin',
-        type=str,
-        default="bag2pcd"
-    )
-    parser.add_argument(
-        "--pcd_path",
-        help="save pcd path",
-        type=str,
-        default=""
-    )
-    parser.add_argument(
-        "--bin_path",
-        help="save bin path",
-        type=str,
-        default=""
-    )
-    parser.add_argument(
-        "--lidar_topic",
-        help="lidar topic name",
-        type=str,
-        default=""
-    )
-    parser.add_argument(
-        "--camera_topic",
-        help="camera topic name",
-        type=str,
-        default=""
-    )
-    parser.add_argument(
-        "--img_path",
-        help="save img path",
-        type=str,
-        default=""
-    )
+    parser.add_argument("--bag_path",help='.bag file path.',type=str,default="")
+    parser.add_argument("--mode",help='.bag to .pcd or .bag to .bin',type=str,default="bag2pcd")
+    parser.add_argument("--pcd_path",help="save pcd path",type=str,default="")
+    parser.add_argument("--bin_path",help="save bin path",type=str,default="")
+    parser.add_argument("--lidar_topic",help="lidar topic name",type=str,default="")
+    parser.add_argument("--camera_topic",help="camera topic name",type=str,default="")
+    parser.add_argument("--img_path",help="save img path",type=str,default="")
     args = parser.parse_args()
     
     if len(args.pcd_path) != 0:
