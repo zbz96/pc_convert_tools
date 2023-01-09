@@ -4,8 +4,8 @@ import argparse
 import ros_numpy
 import sensor_msgs
 import numpy as np
-import sensor_msgs.point_cloud2 as pc2
 import rosbag
+import cv2
 
 def convert_pc_msg_to_np(pc_msg,remove_nans=True):
     pc_msg.__class__ = sensor_msgs.msg._PointCloud2.PointCloud2
@@ -24,6 +24,12 @@ def convert_pc_msg_to_np(pc_msg,remove_nans=True):
         pc_np[...,3] = cloud_array['intensity']
 
     return pc_np
+
+def bag2img(path, img_msg):
+    image_data = np.frombuffer(img_msg.data, dtype=np.uint8)
+    image = cv2.imdecode(image_data, cv2.IMREAD_COLOR)
+    imgFileName = path + str(img_msg.header.stamp)+'.png'
+    cv2.imwrite(imgFileName, image)
 
 def bag2pcd(path, msg, pc_np):
 
@@ -79,10 +85,22 @@ def main():
         default="/home/user/bin_path"
     )
     parser.add_argument(
-        "--topic",
-        help="topic name",
+        "--lidar_topic",
+        help="lidar topic name",
         type=str,
-        default="/pc/lidar/top/pointcloud"
+        default=""
+    )
+    parser.add_argument(
+        "--camera_topic",
+        help="camera topic name",
+        type=str,
+        default=""
+    )
+    parser.add_argument(
+        "--img_path",
+        help="save img path",
+        type=str,
+        default=""
     )
     args = parser.parse_args()
     
@@ -91,18 +109,18 @@ def main():
     for dir in  os.listdir(args.bag_path):
         print(dir)
         bag_files.append(args.bag_path + dir)
-    print(bag_files)
-    print("Start to Convert")
-    
 
     for bag_file in bag_files:
+        print("Start to convert %s" %bag_file)
         for topic, msg, t in rosbag.Bag(bag_file).read_messages():
-            if topic == args.topic:
+            if topic == args.lidar_topic:
                 pc_np= convert_pc_msg_to_np(msg,remove_nans=True)
                 if args.mode =='bag2pcd':
                     bag2pcd(args.pcd_path,msg,pc_np)
                 if args.mode == 'bag2bin':
                     bag2bin(args.bin_path, msg,pc_np)
+            if topic == args.camera_topic:
+                bag2img(args.img_path, msg)
 
 if __name__ == '__main__':
     main()

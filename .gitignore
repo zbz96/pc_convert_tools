@@ -9,6 +9,7 @@
 pcd_path/
 bag_path/
 bin_path/
+img_path/
 log/
 data/
 # Python
