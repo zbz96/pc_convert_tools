@@ -8,8 +8,7 @@ Python 3.8.2
 
 ### 1. Install python libraries ###
 `$ pip install numpy==1.23.5`  
-`$ pip install argparse`  
-`$ pip install pypcd`   
+`$ pip install argparse`
 `$ pip install rosbag`  
 `$ pip install rosbags`  
 `$ pip install rosnumpy`  

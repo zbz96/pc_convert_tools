@@ -7,8 +7,22 @@
 import numpy as np
 import os
 import argparse
-from pypcd import pypcd
 
+def readPCD(file):
+    lines = []
+    num_points = None
+    with open(file,'r') as f:
+        for line in f:
+            lines.append(line.strip())
+            if line.startswith('POINTS'):
+                num_points = int(line.split()[-1])
+    assert num_points is not None
+    
+    points=[]
+    for line in lines[-num_points:]:
+        x,y,z,intensity = list(map(float,line.split()))
+        points.append(np.array([x,y,z,intensity],dtype=np.float32))
+    return np.array(points,dtype=np.float32)
 
 def main():
     ## Add parser
@@ -17,32 +31,25 @@ def main():
     parser.add_argument("--bin_path",help=".bin file path.",type=str,default="/home/user/lidar_bin")
     args = parser.parse_args()
 
+    if not os.path.exists(args.pcd_path):
+        print("Please check if the PCD file exists")
+    if not os.path.exists(args.bin_path):
+        os.mkdir(args.bin_path)
+
     ## Load pcd files
     pcd_files = []
     for (path, dir, files) in os.walk(args.pcd_path):
         for filename in files:
             ext = os.path.splitext(filename)[-1]
             if ext == '.pcd':
-                pcd_files.append(path + "/" + filename)
+                pcd_files.append(path+ filename)
 
     print("Start to Convert bin to pcd")
 
     for pcd_file in pcd_files:
-        ## Get pcd file
-        pc = pypcd.PointCloud.from_path(pcd_file)
-
-        binFileName = args.pcd_path + (pcd_file.split('/')[-1]).split('.')[0] + '.bin'
-        ## Get data from pcd (x, y, z, intensity, ring, time)
-        np_x = (np.array(pc.pc_data['x'], dtype=np.float32)).astype(np.float32)
-        np_y = (np.array(pc.pc_data['y'], dtype=np.float32)).astype(np.float32)
-        np_z = (np.array(pc.pc_data['z'], dtype=np.float32)).astype(np.float32)
-        np_i = (np.array(pc.pc_data['intensity'], dtype=np.float32)).astype(np.float32)/256
-        # np_r = (np.array(pc.pc_data['ring'], dtype=np.float32)).astype(np.float32)
-        # np_t = (np.array(pc.pc_data['time'], dtype=np.float32)).astype(np.float32)
-
-        ## Stack all data    
-        points_32 = np.transpose(np.vstack((np_x, np_y, np_z, np_i)))
-
+        points_32 = readPCD(pcd_file)
+        suffix = pcd_file.split('/')[-1].split('.')[-1] #pcd
+        binFileName = args.bin_path + pcd_file.split('/')[-1].replace(suffix,'bin')
         ## Save bin file                                    
         points_32.tofile(binFileName)
     

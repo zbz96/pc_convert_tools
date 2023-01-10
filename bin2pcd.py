@@ -31,18 +31,8 @@ def bin2pcd(binFile,pcdFileName):
 
 def main():
     parser = argparse.ArgumentParser(description="Convert .bin to .pcd")
-    parser.add_argument(
-        "--bin_path",
-        help='.bin file path.',
-        type=str,
-        default="/home/user/lidar_bin"
-    )
-    parser.add_argument(
-        "--pcd_path",
-        help='.pcd file path.',
-        type=str,
-        default="/home/user/lidar_pcd"
-    )
+    parser.add_argument("--bin_path",help='.bin file path.',type=str,default="/home/user/lidar_bin")
+    parser.add_argument("--pcd_path",help='.pcd file path.',type=str,default="/home/user/lidar_pcd")
     args = parser.parse_args()
     
     #Load  bin_files
@@ -51,12 +41,18 @@ def main():
         for filename in files:
             ext = os.path.splitext(filename)[-1]
             if ext == '.bin':
-                bin_files.append(path + "/" + filename)
+                bin_files.append(path+ filename)
+
+    if not os.path.exists(args.bin_path):
+        print("Please check if the bin file exists")
+    if not os.path.exists(args.pcd_path):
+        os.mkdir(args.pcd_path)
     
     print("Start to Convert bin to pcd")
     #convert
     for bin_file in bin_files:
-        pcdFileName = args.pcd_path + (bin_file.split('/')[-1]).split('.')[0] + '.pcd'
+        suffix = bin_file.split('/')[-1].split('.')[-1] #bin
+        pcdFileName = args.pcd_path + bin_file.split('/')[-1].replace(suffix,'pcd')
         bin2pcd(bin_file,pcdFileName)
 
 if __name__ == '__main__':
