@@ -1,3 +1,12 @@
+"""
+    author:
+        zhaobingzhen@tongxin.cn
+    功能:
+        bagConvert，不依赖ros/pcl环境
+            bag2pcd 
+            bag2bin 
+            bag2img
+"""
 
 import os
 import argparse
@@ -39,7 +48,7 @@ def bag2pcd(path, msg, pc_np):
     #得到点云点数
     point_num=pc_np.shape[0]
     #pcd头部（重要）
-    handle.write('# .PCD v0.7 - Point Cloud Data file format\nVERSION 0.7\nFIELDS x y z\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1')
+    handle.write('# .PCD v0.7 - Point Cloud Data file format\nVERSION 0.7\nFIELDS x y z intensity\nSIZE 4 4 4 4\nTYPE F F F F\nCOUNT 1 1 1 1')
     string = '\nWIDTH ' + str(point_num)
     handle.write(string)
     handle.write('\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0')

@@ -1,26 +1,20 @@
+"""
+    author:
+        zhaobingzhen@tongxin.cn
+    功能:
+        pcd2bin
+"""
 import numpy as np
 import os
 import argparse
-import pypcd
-import csv
-from tqdm import tqdm
+from pypcd import pypcd
 
 
 def main():
     ## Add parser
     parser = argparse.ArgumentParser(description="Convert .pcd to .bin")
-    parser.add_argument(
-        "--pcd_path",
-        help=".pcd file path.",
-        type=str,
-        default="/home/user/lidar_pcd"
-    )
-    parser.add_argument(
-        "--bin_path",
-        help=".bin file path.",
-        type=str,
-        default="/home/user/lidar_bin"
-    )
+    parser.add_argument("--pcd_path",help=".pcd file path.",type=str,default="/home/user/lidar_pcd")
+    parser.add_argument("--bin_path",help=".bin file path.",type=str,default="/home/user/lidar_bin")
     args = parser.parse_args()
 
     ## Load pcd files
