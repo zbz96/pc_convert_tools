@@ -91,11 +91,10 @@ def main():
     #Load bagfile
     bag_files = []
     for dir in  os.listdir(args.bag_path):
-        print(dir)
         bag_files.append(args.bag_path + dir)
 
     for bag_file in bag_files:
-        print("Start to convert %s" %bag_file)
+        print("Start to convert %s in %s" %(args.lidar_topic, bag_file))
         for topic, msg, t in rosbag.Bag(bag_file).read_messages():
             if topic == args.lidar_topic:
                 pc_np= convert_pc_msg_to_np(msg,remove_nans=True)
@@ -105,6 +104,6 @@ def main():
                     bag2bin(args.bin_path, msg,pc_np)
             if topic == args.camera_topic:
                 bag2img(args.img_path, msg)
-
+        print("Ending convert %s in %s" %(args.lidar_topic, bag_file))
 if __name__ == '__main__':
     main()

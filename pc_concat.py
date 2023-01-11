@@ -4,12 +4,8 @@
     功能：  
         点云拼接
 """
-
-from fileinput import filename
-from operator import le
 import os
 import argparse
-import pypcd
 import open3d as o3d
 import numpy as np
 
@@ -92,7 +88,8 @@ def main():
     print("The number of right_pcd_file is %s" %len(right_pcd_files))
 
     assert len(top_pcd_files) == len(left_pcd_files) == len(right_pcd_files), 'The number of PCD is inconsistent'
-
+    
+    print("Concatenating the pointcloud")
     for i, top_file in enumerate(top_pcd_files):
         left_file = left_pcd_files[i]
         right_file = right_pcd_files[i]
