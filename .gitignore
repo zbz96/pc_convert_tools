@@ -6,6 +6,8 @@
 *.code-workspace
 .gitignore
 # colcon
+*_img/
+*_pcd/
 *_path/
 log/
 data/

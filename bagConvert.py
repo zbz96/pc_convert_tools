@@ -16,6 +16,16 @@ import numpy as np
 import rosbag
 import cv2
 
+
+lidar_topics = [
+    "/pc/lidar/top/pointcloud",
+    "/pc/lidar/left/pointcloud",
+    "/pc/lidar/right/pointcloud"
+]
+camera_topics = [
+    "/camera0/image_raw/compressed"
+]
+
 def convert_pc_msg_to_np(pc_msg,remove_nans=True):
     pc_msg.__class__ = sensor_msgs.msg._PointCloud2.PointCloud2
     offset_sorted = {f.offset: f for f in pc_msg.fields}
@@ -67,43 +77,48 @@ def bag2bin(path, msg, pc_np):
     binFileName = path + str(msg.header.stamp.secs) +'.'+str(msg.header.stamp.nsecs) +'.bin'
     pc_np.tofile(binFileName)
 
-def main():
+def bagConvert():
     parser =  argparse.ArgumentParser(description="Convert .bag to .pcd or .bin")
     parser.add_argument("--bag_path",help='.bag file path.',type=str,default="")
     parser.add_argument("--mode",help='.bag to .pcd or .bag to .bin',type=str,default="bag2pcd")
-    parser.add_argument("--pcd_path",help="save pcd path",type=str,default="")
-    parser.add_argument("--bin_path",help="save bin path",type=str,default="")
-    parser.add_argument("--lidar_topic",help="lidar topic name",type=str,default="")
-    parser.add_argument("--camera_topic",help="camera topic name",type=str,default="")
     parser.add_argument("--img_path",help="save img path",type=str,default="")
     args = parser.parse_args()
     
-    if len(args.pcd_path) != 0:
-        if os.path.exists(args.pcd_path) == False:
-            os.mkdir(args.pcd_path)
-    if len(args.bin_path) != 0:
-        if os.path.exists(args.bin_path) == False:
-            os.mkdir(args.bin_path)
-    if len(args.img_path) != 0:
-        if os.path.exists(args.img_path) == False:
-            os.mkdir(args.img_path)
     
+    #mkdir folder for each lidar topic
+    pcd_path_map = {}
+    for tp in lidar_topics:
+        lidar_suffix = tp.split('/')[-2] #top
+        path = lidar_suffix+"_pcd/"
+        if not os.path.exists(path): 
+            os.mkdir(path)
+        pcd_path_map[tp] = path
+    
+    #mkdir folder for each camera topic
+    cam_path_map = {}
+    for tp in camera_topics:
+        camera_suffix = tp.split('/')[1] #camera0
+        path = camera_suffix+"_img/"
+        if not os.path.exists(path): 
+            os.mkdir(path)
+        cam_path_map[tp] = path
+        
     #Load bagfile
     bag_files = []
     for dir in  os.listdir(args.bag_path):
         bag_files.append(args.bag_path + dir)
 
     for bag_file in bag_files:
-        print("Start to convert %s in %s" %(args.lidar_topic, bag_file))
         for topic, msg, t in rosbag.Bag(bag_file).read_messages():
-            if topic == args.lidar_topic:
-                pc_np= convert_pc_msg_to_np(msg,remove_nans=True)
-                if args.mode =='bag2pcd':
-                    bag2pcd(args.pcd_path,msg,pc_np)
-                if args.mode == 'bag2bin':
-                    bag2bin(args.bin_path, msg,pc_np)
-            if topic == args.camera_topic:
-                bag2img(args.img_path, msg)
-        print("Ending convert %s in %s" %(args.lidar_topic, bag_file))
+            for tp in lidar_topics:
+                if topic == tp:
+                    pc_np= convert_pc_msg_to_np(msg,remove_nans=True)
+                    if args.mode =='bag2pcd':
+                        bag2pcd(pcd_path_map[tp],msg,pc_np)
+                    if args.mode == 'bag2bin':
+                        bag2bin(pcd_path_map[tp], msg,pc_np)
+            for tp in camera_topics:
+                if topic == tp:
+                    bag2img(cam_path_map[tp], msg)
 if __name__ == '__main__':
-    main()
+    bagConvert()
