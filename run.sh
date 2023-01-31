@@ -3,11 +3,9 @@
 # --include-topic /pc/lidar/top/pointcloud /pc/lidar/left/pointcloud /pc/lidar/right/pointcloud
 
 #bag2pcd
-python bagConvert.py --bag_path bag_path/ --mode bag2pcd --pcd_path top_pcd_path/ --lidar_topic /pc/lidar/top/pointcloud
-python bagConvert.py --bag_path bag_path/ --mode bag2pcd --pcd_path left_pcd_path/ --lidar_topic /pc/lidar/left/pointcloud
-python bagConvert.py --bag_path bag_path/ --mode bag2pcd --pcd_path right_pcd_path/ --lidar_topic /pc/lidar/right/pointcloud
+python bagConvert.py --bag_path bag_path/ --mode bag2pcd 
 
 #pc_concat
-python pc_concat.py --top_pcd_path top_pcd_path/ --left_pcd_path left_pcd_path/ --right_pcd_path right_pcd_path/
+python pc_concat.py --top_pcd_path top_pcd/ --left_pcd_path left_pcd/ --right_pcd_path right_pcd/
 
 #ground_calibration

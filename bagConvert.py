@@ -85,7 +85,7 @@ def bagConvert():
     args = parser.parse_args()
     
     
-    #mkdir folder for each lidar topic
+    #mkdir pcd folder for each lidar topic
     pcd_path_map = {}
     for tp in lidar_topics:
         lidar_suffix = tp.split('/')[-2] #top
@@ -94,7 +94,16 @@ def bagConvert():
             os.mkdir(path)
         pcd_path_map[tp] = path
     
-    #mkdir folder for each camera topic
+    #mkdir bin folder for each lidar topic
+    bin_path_map = {}
+    for tp in lidar_topics:
+        lidar_suffix = tp.split('/')[-2] #top
+        path = lidar_suffix+"_bin/"
+        if not os.path.exists(path): 
+            os.mkdir(path)
+        bin_path_map[tp] = path
+    
+    #mkdir img folder for each camera topic
     cam_path_map = {}
     for tp in camera_topics:
         camera_suffix = tp.split('/')[1] #camera0
@@ -116,7 +125,7 @@ def bagConvert():
                     if args.mode =='bag2pcd':
                         bag2pcd(pcd_path_map[tp],msg,pc_np)
                     if args.mode == 'bag2bin':
-                        bag2bin(pcd_path_map[tp], msg,pc_np)
+                        bag2bin(bin_path_map[tp], msg,pc_np)
             for tp in camera_topics:
                 if topic == tp:
                     bag2img(cam_path_map[tp], msg)

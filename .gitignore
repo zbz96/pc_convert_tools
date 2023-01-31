@@ -8,6 +8,7 @@
 # colcon
 *_img/
 *_pcd/
+*_bin/
 *_path/
 log/
 data/

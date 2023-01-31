@@ -61,7 +61,7 @@ def main():
     parser.add_argument("--top_pcd_path",help="The top lidar pcd file path",type=str,default="")
     parser.add_argument("--right_pcd_path",help="The right lidar pcd file path",type=str,default="")
     parser.add_argument("--left_pcd_path",help="The left lidar pcd file path",type=str,default="")
-    parser.add_argument("--concat_pcd_path",help="output concat_pc pcd file path",type=str,default="concat_pcd_path/")
+    parser.add_argument("--concat_pcd_path",help="output concat_pc pcd file path",type=str,default="concat_pcd/")
     args = parser.parse_args()
 
     if not os.path.exists(args.top_pcd_path) or not os.path.exists(args.right_pcd_path) or not os.path.exists(args.left_pcd_path):
