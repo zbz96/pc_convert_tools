@@ -5,6 +5,7 @@
 .vscode/
 *.code-workspace
 .gitignore
+wit/
 # colcon
 *_img/
 *_pcd/

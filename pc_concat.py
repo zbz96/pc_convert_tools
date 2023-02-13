@@ -1,8 +1,7 @@
 """
-    author：
-        zhaobingzhen@tongxin.cn
-    功能：  
-        点云拼接
+Date:2023.02.03
+author: zhaobingzhen@tongxin.cn
+describe: this script is used for concatenate pointcloud
 """
 import os
 import argparse
@@ -45,25 +44,23 @@ def trans(points,rotMat):
     rot_points = np.dot(points, rotMat[:3, :3].T) + rotMat[:3, 3]
     return rot_points
 
-def pc_concat(path,top_file,left_file,right_file):
+def pc_concat(path,top_file,left_file,right_file,ground_calib,mat_file):
     top_pc = read_points(top_file)
     left_pc = read_points(left_file)
     right_pc = read_points(right_file)
     
     left_pc = trans(left_pc,left_trans)
     right_pc = trans(right_pc,right_trans)
-    pc_concat = np.concatenate((top_pc, right_pc), axis=0).astype(np.float32)
+    pc_concat = np.concatenate((top_pc, right_pc,left_pc), axis=0).astype(np.float32)
+    if ground_calib:
+        #读取mat
+        rotMat = np.loadtxt(mat_file)
+        pc_concat = np.dot(pc_concat, rotMat[:3, :3].T) + rotMat[:3, 3]
     pcdFileName = path + top_file.split('/')[-1]
     savePCD(pc_concat,pcdFileName)
 
-def main():
-    parser = argparse.ArgumentParser(description="PointCloudConcatenate")
-    parser.add_argument("--top_pcd_path",help="The top lidar pcd file path",type=str,default="")
-    parser.add_argument("--right_pcd_path",help="The right lidar pcd file path",type=str,default="")
-    parser.add_argument("--left_pcd_path",help="The left lidar pcd file path",type=str,default="")
-    parser.add_argument("--concat_pcd_path",help="output concat_pc pcd file path",type=str,default="concat_pcd/")
-    args = parser.parse_args()
-
+def concat_calib(args,ground_calib,mat_file):
+    
     if not os.path.exists(args.top_pcd_path) or not os.path.exists(args.right_pcd_path) or not os.path.exists(args.left_pcd_path):
         print("Please check if the PCD file exists")
     
@@ -89,11 +86,32 @@ def main():
 
     assert len(top_pcd_files) == len(left_pcd_files) == len(right_pcd_files), 'The number of PCD is inconsistent'
     
-    print("Concatenating the pointcloud")
-    for i, top_file in enumerate(top_pcd_files):
-        left_file = left_pcd_files[i]
-        right_file = right_pcd_files[i]
-        pc_concat(args.concat_pcd_path,top_file,left_file,right_file)
+    """
+        刚开始没有进行地面矫正，拼接一帧点云用于地面矫正，求矫正矩阵
+        然后用矫正矩阵对拼接点云进行矫正，用于标注
+    """
+    if not ground_calib:
+        left_file = left_pcd_files[0]
+        right_file = right_pcd_files[0]
+        top_file = top_pcd_files[0]
+        pc_concat(args.concat_pcd_path,top_file,left_file,right_file,ground_calib,mat_file=None)
+    else:
+        print("Concatenating the pointcloud")
+        for i, top_file in enumerate(top_pcd_files):
+            left_file = left_pcd_files[i]
+            right_file = right_pcd_files[i]
+            pc_concat(args.concat_pcd_path,top_file,left_file,right_file,ground_calib,mat_file)
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description="PointCloudConcatenate")
+    parser.add_argument("--top_pcd_path",help="The top lidar pcd file path",type=str,default="top_pcd/")
+    parser.add_argument("--right_pcd_path",help="The right lidar pcd file path",type=str,default="right_pcd/")
+    parser.add_argument("--left_pcd_path",help="The left lidar pcd file path",type=str,default="left_pcd/")
+    parser.add_argument("--concat_pcd_path",help="output concat_pc pcd file path",type=str,default="kitti/training/velodyne/")
+    args = parser.parse_args()
+    mat_file = 'ground_calib_mat.txt'
+    if os.path.exists("ground.ply")  and os.path.exists("ground_calib_mat.txt"):
+        ground_calib = True
+    else:
+        ground_calib = False
+    concat_calib(args,ground_calib,mat_file)

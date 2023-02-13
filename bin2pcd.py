@@ -1,8 +1,7 @@
 """
-    author:
-        zhaobingzhen@tongxin.cn
-    功能:
-        bin2pcd
+Date:2023.01.26
+author: zhaobingzhen@tongxin.cn
+describe: this script is used for bin2pcd
 """
 import numpy as np
 import os

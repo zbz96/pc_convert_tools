@@ -1,11 +1,5 @@
 #bagConvert
-# rosbags-convert bag_path/rosbag2_2022_12_10-15_16_55/ \
-# --include-topic /pc/lidar/top/pointcloud /pc/lidar/left/pointcloud /pc/lidar/right/pointcloud
+rosbags-convert bag_path/rosbag2_2022_08_05-14_03_19.bag
+#
+python generate_data.py
 
-#bag2pcd
-python bagConvert.py --bag_path bag_path/ --mode bag2pcd 
-
-#pc_concat
-python pc_concat.py --top_pcd_path top_pcd/ --left_pcd_path left_pcd/ --right_pcd_path right_pcd/
-
-#ground_calibration

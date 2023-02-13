@@ -1,11 +1,7 @@
 """
-    author:
-        zhaobingzhen@tongxin.cn
-    功能:
-        bagConvert，不依赖ros/pcl环境
-            bag2pcd 
-            bag2bin 
-            bag2img
+Date:2023.02.06
+author: zhaobingzhen@tongxin.cn
+describe: this script is used for read bagfile and convert the bag to pcd/bin/img
 """
 
 import os
@@ -16,7 +12,9 @@ import numpy as np
 import rosbag
 import cv2
 
-
+"""
+    根据需求更改topic
+"""
 lidar_topics = [
     "/pc/lidar/top/pointcloud",
     "/pc/lidar/left/pointcloud",
@@ -77,31 +75,26 @@ def bag2bin(path, msg, pc_np):
     binFileName = path + str(msg.header.stamp.secs) +'.'+str(msg.header.stamp.nsecs) +'.bin'
     pc_np.tofile(binFileName)
 
-def bagConvert():
-    parser =  argparse.ArgumentParser(description="Convert .bag to .pcd or .bin")
-    parser.add_argument("--bag_path",help='.bag file path.',type=str,default="")
-    parser.add_argument("--mode",help='.bag to .pcd or .bag to .bin',type=str,default="bag2pcd")
-    parser.add_argument("--img_path",help="save img path",type=str,default="")
-    args = parser.parse_args()
-    
-    
+def bagConvert(args,lidar_topics,camera_topics,):
     #mkdir pcd folder for each lidar topic
-    pcd_path_map = {}
-    for tp in lidar_topics:
-        lidar_suffix = tp.split('/')[-2] #top
-        path = lidar_suffix+"_pcd/"
-        if not os.path.exists(path): 
-            os.mkdir(path)
-        pcd_path_map[tp] = path
+    if args.mode == 'bag2pcd':
+        pcd_path_map = {}
+        for tp in lidar_topics:
+            lidar_suffix = tp.split('/')[-2] #top
+            path = lidar_suffix+"_pcd/"
+            if not os.path.exists(path): 
+                os.mkdir(path)
+            pcd_path_map[tp] = path
     
     #mkdir bin folder for each lidar topic
-    bin_path_map = {}
-    for tp in lidar_topics:
-        lidar_suffix = tp.split('/')[-2] #top
-        path = lidar_suffix+"_bin/"
-        if not os.path.exists(path): 
-            os.mkdir(path)
-        bin_path_map[tp] = path
+    if args.mode == 'bag2bin':
+        bin_path_map = {}
+        for tp in lidar_topics:
+            lidar_suffix = tp.split('/')[-2] #top
+            path = lidar_suffix+"_bin/"
+            if not os.path.exists(path): 
+                os.mkdir(path)
+            bin_path_map[tp] = path
     
     #mkdir img folder for each camera topic
     cam_path_map = {}
@@ -130,4 +123,9 @@ def bagConvert():
                 if topic == tp:
                     bag2img(cam_path_map[tp], msg)
 if __name__ == '__main__':
-    bagConvert()
+    parser =  argparse.ArgumentParser(description="Convert .bag to .pcd or .bin")
+    parser.add_argument("--bag_path",help='.bag file path.',type=str,default="bag_path/")
+    parser.add_argument("--mode",help='.bag to .pcd or .bag to .bin',type=str,default="bag2bin")
+    parser.add_argument("--img_path",help="save img path",type=str,default="")
+    args = parser.parse_args()
+    bagConvert(args,lidar_topics,camera_topics)
