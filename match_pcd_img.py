@@ -45,7 +45,7 @@ def match(img_path,lidar_path,dst_path,tolerate_offset):
         lidar_time = name2time(lidar_file,has_extenstion=True)
         lidar_sec = lidar_file.split('.')[0]
         if lidar_sec not in img_dict:
-            print("The lidar frame is not match for image %s" %lidar_file)
+            print("The lidar frame %s is not match for image" %lidar_file)
         else:
             #如果图像中存在该帧雷达时间对应的图片，找到时间最近的图片
             match_id, min_delta_t = -1, np.Inf

@@ -1,5 +1,15 @@
-#bagConvert
-rosbags-convert bag_path/rosbag2_2022_08_05-14_03_19.bag
-#
-python generate_data.py
+#! /usr/bin/env bash
 
+#bagConvert 
+
+dir="./bag_path/"
+ls $dir | while read line
+do
+    file=${dir}${line}
+    echo $file
+    rm -rf ./*_img/ ./*_pcd/ ./wit
+    annotate_bag="lane_change_"${file:0-5:1}
+    echo $annotate_bag
+    python generate_datasets.py
+    mv ./wit/ ../SUSTechPOINTS-dev-auto-annotate/data/$annotate_bag
+done

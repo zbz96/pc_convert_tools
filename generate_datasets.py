@@ -28,6 +28,8 @@ def main(args):
             if i == 'camera/':
                 if not os.path.exists('wit/' + i):
                     os.makedirs('wit/camera/front/')
+                    os.makedirs('wit/camera/left/')
+                    os.makedirs('wit/camera/right/')
             else:
                 if not os.path.exists('wit/' + i):
                     os.makedirs('wit/' + i)
@@ -54,9 +56,20 @@ def main(args):
         calib_path ='wit/calib/'
     
     print("***************Start to match imge and pcd***************")
-    img_path = camera_topics[0].split('/')[1] + '_img/'
-    match(img_path,lidar_path,dst_path,tolerate_offset = 200)
-    # #calib
+    for camera_topic in camera_topics:
+        if camera_topic.split('/')[1] == 'camera0':
+            img_path = camera_topic.split('/')[1] + '_img/'
+            dst_path = 'wit/camera/front/'
+            match(img_path,lidar_path,dst_path,tolerate_offset = 200)
+        if camera_topic.split('/')[1] == 'camera4':
+            img_path = camera_topic.split('/')[1] + '_img/'
+            dst_path = 'wit/camera/right'
+            match(img_path,lidar_path,dst_path,tolerate_offset = 200)
+        if camera_topic.split('/')[1] == 'camera5':
+            img_path = camera_topic.split('/')[1] + '_img/'
+            dst_path = 'wit/camera/left/'
+            match(img_path,lidar_path,dst_path,tolerate_offset = 200)
+    #calib
     print("*****************Start to generate calib ******************")
     for file in os.listdir('wit/lidar'):
         fileName = file.replace('.pcd','.txt')
@@ -79,13 +92,13 @@ if __name__ == '__main__':
         "/pc/lidar/right/pointcloud"
     ]
     camera_topics = [
-        "/camera0/image_raw/compressed"
+        "/camera0/image_raw/compressed",
+        "/camera4/image_raw/compressed",
+        "/camera5/image_raw/compressed"
     ]
-    # camera_topics = [
-    # "/output/lanes_image/compressed"
-    # ]
     mat_file = 'ground_calib_mat.txt' #地面矫正矩阵
-    dataSets = 'kitti'
+    # dataSets = 'kitti'
+    dataSets = 'SUSTechPoints'
     if os.path.exists("ground.ply")  and os.path.exists("ground_calib_mat.txt"):
         ground_calib = True
     else:

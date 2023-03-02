@@ -43,7 +43,7 @@ def main():
             if ext == '.pcd':
                 pcd_files.append(path+ filename)
 
-    print("Start to Convert bin to pcd")
+    print("Start to Convert pcd to bin")
 
     for pcd_file in pcd_files:
         points_32 = readPCD(pcd_file)
