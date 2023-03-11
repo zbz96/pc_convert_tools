@@ -39,12 +39,12 @@ def main(args):
     
     if not ground_calib:
         print("**************Start to ground calibration***************")
-        concat_calib(args,ground_calib,mat_file)
+        concat_calib(args,ground_calib,mat_file,interval)
         pcd_file = os.path.join('kitti/training/velodyne/', os.listdir('kitti/training/velodyne/')[0])
         ground_calib_func(pcd_file,mat_file)
    
     print("**************Start to concatenate PointCloud**************")
-    concat_calib(args,ground_calib,mat_file)
+    concat_calib(args,ground_calib,mat_file,interval)
     
     if dataSets == 'kitti':
         lidar_path = 'kitti/training/velodyne/'
@@ -86,6 +86,7 @@ if __name__ == '__main__':
     parser.add_argument("--concat_pcd_path",help="output concat_pc pcd file path",type=str,default="wit/lidar/")
     args = parser.parse_args()
     
+    interval = 5 #抽帧
     lidar_topics = [
         "/pc/lidar/top/pointcloud",
         "/pc/lidar/left/pointcloud",

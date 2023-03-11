@@ -59,7 +59,7 @@ def pc_concat(path,top_file,left_file,right_file,ground_calib,mat_file):
     pcdFileName = path + top_file.split('/')[-1]
     savePCD(pc_concat,pcdFileName)
 
-def concat_calib(args,ground_calib,mat_file):
+def concat_calib(args,ground_calib,mat_file,interval):
     
     if not os.path.exists(args.top_pcd_path) or not os.path.exists(args.right_pcd_path) or not os.path.exists(args.left_pcd_path):
         print("Please check if the PCD file exists")
@@ -97,7 +97,8 @@ def concat_calib(args,ground_calib,mat_file):
         pc_concat(args.concat_pcd_path,top_file,left_file,right_file,ground_calib,mat_file=None)
     else:
         print("Concatenating the pointcloud")
-        for i, top_file in enumerate(top_pcd_files):
+        for i in range(0,len(top_pcd_files),interval):
+            top_file = top_pcd_files[i]
             left_file = left_pcd_files[i]
             right_file = right_pcd_files[i]
             pc_concat(args.concat_pcd_path,top_file,left_file,right_file,ground_calib,mat_file)
@@ -114,4 +115,5 @@ if __name__ == '__main__':
         ground_calib = True
     else:
         ground_calib = False
-    concat_calib(args,ground_calib,mat_file)
+    interval = 5
+    concat_calib(args,ground_calib,mat_file,interval)
